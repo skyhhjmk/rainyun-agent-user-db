@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>授权访问 · 雨云代理商平台</title>
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body class="auth-page">
+  <main class="auth-card consent-card">
+    <a class="brand" href="/"><span class="brand-mark">R</span><span>雨云代理商平台</span></a>
+    <p class="eyebrow">OAUTH AUTHORIZATION</p>
+    <h1>授权第三方应用</h1>
+    <p><strong>{clientName}</strong> 请求访问你的账号。</p>
+    <div class="identity-row"><span class="avatar avatar-small">R</span><div><strong>雨云 UID {uid}</strong><div class="small muted">已验证的代理商客户</div></div></div>
+    <section class="scope-box"><h2>此应用将获得</h2><ul>{#for item in scopes}<li><span class="check">✓</span>{#if item == 'profile'}查看你的雨云 UID 和昵称{#else}查看你的邮箱地址{/if}</li>{/for}</ul></section>
+    <form method="post" action="/oauth/authorize/decision" class="stack">
+      <input type="hidden" name="csrf_token" value="{csrfToken}">
+      <input type="hidden" name="client_id" value="{clientId}"><input type="hidden" name="redirect_uri" value="{redirectUri}">
+      <input type="hidden" name="scope" value="{scope}"><input type="hidden" name="state" value="{state}">
+      <input type="hidden" name="code_challenge" value="{challenge}"><input type="hidden" name="code_challenge_method" value="{challengeMethod}">
+      <button class="button button-primary" type="submit" name="decision" value="approve">同意并继续</button>
+      <button class="button button-secondary" type="submit" name="decision" value="deny">拒绝</button>
+    </form>
+    <p class="small muted">授权使用短期令牌和 PKCE。你的 API Key、云资源凭据和雨云密码不会提供给此应用。</p>
+  </main>
+</body>
+</html>

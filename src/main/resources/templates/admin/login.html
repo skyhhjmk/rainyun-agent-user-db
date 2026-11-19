@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>管理端登录 · 雨云代理商平台</title><link rel="stylesheet" href="/assets/app.css"></head>
+<body class="auth-page"><main class="auth-card">
+  <a class="brand" href="/"><span class="brand-mark">R</span><span>雨云代理商平台</span></a>
+  <p class="eyebrow">ADMIN CONSOLE</p><h1>管理端登录</h1><p class="muted">使用管理员凭据继续。</p>
+  {#if error}<div class="alert alert-error">{error}</div>{/if}
+  <form method="post" action="/admin/login" class="stack">
+    <label for="username">管理员账号</label><input id="username" name="username" autocomplete="username" required>
+    <label for="password">密码</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+    <button class="button button-primary" type="submit">登录管理端 <span aria-hidden="true">→</span></button>
+  </form>
+  <p class="small muted">首次启动通过环境变量初始化管理员，之后可在管理后台修改账号与密码。</p>
+</main></body></html>

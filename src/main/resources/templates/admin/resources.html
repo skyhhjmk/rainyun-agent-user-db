@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{customer.rainyunName} 的资源 · 雨云代理商平台</title><link rel="stylesheet" href="/assets/app.css"></head>
+<body><header class="topbar"><a class="brand" href="/admin/dashboard"><span class="brand-mark">R</span><span>雨云代理商平台</span></a><a class="button button-quiet" href="/admin/dashboard">返回控制台</a></header>
+<main class="page"><div class="page-heading"><div><p class="eyebrow">CUSTOMER RESOURCE INVENTORY</p><h1>{customer.rainyunName}</h1><p class="muted">雨云 UID <code>{customer.rainyunUid}</code> · 数据由雨云 API 实时读取</p></div><span class="status status-active">只读清单</span></div>
+<div class="notice"><strong>凭据保护</strong><span>此视图仅显示资源名称、状态和网络地址，不展示密码、访问密钥或控制台凭据。</span></div>
+<div class="table-wrap panel"><table><thead><tr><th>产品</th><th>资源</th><th>资源 ID</th><th>状态</th><th>区域</th><th>地址</th></tr></thead><tbody>
+{#for item in items}<tr><td><span class="product-tag">{item.type}</span></td><td class="table-primary">{item.name}</td><td><code>{item.resourceId}</code></td><td>{item.status}</td><td>{item.region}</td><td><code>{item.address}</code></td></tr>{/for}
+{#if items.size == 0}<tr><td colspan="6" class="empty-cell">没有读取到可显示的资源，或该账号当前没有资源。</td></tr>{/if}
+</tbody></table></div><p class="small muted">API 暂时不可用时会在对应产品类型显示读取错误。刷新页面可重新读取雨云 API。</p></main></body></html>

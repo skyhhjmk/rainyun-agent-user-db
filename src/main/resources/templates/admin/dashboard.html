@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>控制台 · 雨云代理商平台</title><link rel="stylesheet" href="/assets/app.css"></head>
+<body>
+  <header class="topbar"><a class="brand" href="/admin/dashboard"><span class="brand-mark">R</span><span>雨云代理商平台</span></a><div class="topbar-right"><a class="button button-quiet" href="/admin/settings">系统设置</a><span class="admin-chip">代理商管理</span><form method="post" action="/logout"><button class="button button-quiet" type="submit">退出</button></form></div></header>
+  <main class="page">
+    <div class="page-heading"><div><p class="eyebrow">PARTNER CONSOLE</p><h1>资源与授权管理</h1><p class="muted">管理已验证客户，查看雨云资源并登记 OAuth2 应用。</p></div><span class="date-chip">RAINYUN · PARTNER</span></div>
+    <section class="metric-grid">
+      <article class="metric-card"><span class="metric-label">已绑定客户</span><strong>{accounts.size}</strong><span class="metric-foot">雨云上级 UID 已验证</span></article>
+      <article class="metric-card"><span class="metric-label">OAuth2 应用</span><strong>{clients.size}</strong><span class="metric-foot">授权码 + PKCE</span></article>
+      <article class="metric-card metric-accent"><span class="metric-label">客户身份验证</span><strong class="metric-word">上级 UID 匹配</strong><span class="metric-foot">每次绑定时实时校验</span></article>
+    </section>
+    {#if formError}<div class="alert alert-error">{formError}</div>{/if}
+    {#if newClientId}<section class="panel one-time-secret"><p class="eyebrow">CLIENT CREATED</p><h2>OAuth2 客户端已创建</h2><p>请现在复制凭据。客户端密钥只在本次响应中显示一次。</p><dl><dt>Client ID</dt><dd><code>{newClientId}</code></dd>{#if newSecret}<dt>Client Secret</dt><dd><code>{newSecret}</code></dd>{/if}</dl></section>{/if}
+    <section class="section-heading"><div><p class="eyebrow">CUSTOMER ACCOUNTS</p><h2>客户账号</h2></div><span class="count-pill">{accounts.size} 位客户</span></section>
+    <div class="table-wrap panel"><table><thead><tr><th>客户</th><th>雨云 UID</th><th>联系邮箱</th><th>最近校验</th><th>状态</th><th>管理</th></tr></thead><tbody>
+    {#for customer in accounts}<tr><td><div class="table-primary">{customer.name}</div><span class="small muted">雨云账号</span></td><td><code>{customer.uid}</code></td><td>{#if customer.email}{customer.email}{#else}<span class="muted">未提供</span>{/if}</td><td>{customer.verifiedAt}</td><td><span class="status {#if customer.status == 'ACTIVE'}status-active{#else}status-disabled{/if}">{customer.status}</span></td><td class="actions"><a class="text-link" href="/admin/customers/{customer.uid}/resources">查看资源</a>{#if customer.status == 'ACTIVE'}<form method="post" action="/admin/customers/{customer.uid}/disable"><input type="hidden" name="csrf_token" value="{csrfToken}"><button class="text-button danger" type="submit">停用</button></form>{#else}<form method="post" action="/admin/customers/{customer.uid}/enable"><input type="hidden" name="csrf_token" value="{csrfToken}"><button class="text-button" type="submit">启用</button></form>{/if}</td></tr>{/for}
+    {#if accounts.size == 0}<tr><td colspan="6" class="empty-cell">还没有客户。客户使用雨云 API Key 绑定并完成上级 UID 校验后，会出现在这里。</td></tr>{/if}
+    </tbody></table></div>
+    <section class="section-heading section-spaced"><div><p class="eyebrow">OAUTH2 INTEGRATIONS</p><h2>第三方应用</h2></div><span class="count-pill">标准授权码流程</span></section>
+    <div class="split-layout">
+      <div class="panel table-wrap"><table><thead><tr><th>应用</th><th>Client ID</th><th>回调地址</th><th>类型 / Scope</th><th>状态</th><th></th></tr></thead><tbody>
+      {#for app in clients}<tr><td class="table-primary">{app.name}</td><td><code>{app.clientId}</code></td><td class="multiline">{app.redirectUris}</td><td>{#if app.publicClient}Public{#else}Confidential{/if}<br><span class="small muted">{app.scopes}</span></td><td><span class="status {#if app.active}status-active{#else}status-disabled{/if}">{#if app.active}启用中{#else}已停用{/if}</span></td><td>{#if app.active}<form method="post" action="/admin/clients/{app.clientId}/disable"><input type="hidden" name="csrf_token" value="{csrfToken}"><button class="text-button danger" type="submit">停用</button></form>{/if}</td></tr>{/for}
+      {#if clients.size == 0}<tr><td colspan="6" class="empty-cell">尚未登记 OAuth2 应用。</td></tr>{/if}
+      </tbody></table></div>
+      <aside class="panel create-panel"><p class="eyebrow">NEW INTEGRATION</p><h3>登记 OAuth2 客户端</h3>
+        <form method="post" action="/admin/clients" class="stack">
+          <input type="hidden" name="csrf_token" value="{csrfToken}">
+          <label for="display-name">应用名称</label><input id="display-name" name="display_name" required maxlength="160" placeholder="例如：客户门户">
+          <label for="redirect-uris">允许的回调地址</label><textarea id="redirect-uris" name="redirect_uris" required rows="4" placeholder="https://app.example.com/oauth/callback&#10;每行一个地址"></textarea><span class="small muted">仅允许 HTTPS；localhost 可用 HTTP。需与应用请求中的地址完全一致。</span>
+          <div class="check-row"><label><input type="checkbox" name="profile" checked> 基本资料（UID、昵称）</label><label><input type="checkbox" name="email"> 邮箱</label></div>
+          <label class="check-label"><input type="checkbox" name="public_client"> 公共客户端（移动端 / SPA，不发放密钥）</label>
+          <button class="button button-primary" type="submit">创建客户端 <span aria-hidden="true">→</span></button>
+        </form>
+      </aside>
+    </div>
+    <section class="panel api-reference"><div><p class="eyebrow">OAUTH2 ENDPOINTS</p><h3>集成参数</h3><p class="muted">发现文档会公布当前部署的完整端点地址。</p></div><div class="endpoint-list"><code>/.well-known/oauth-authorization-server</code><code>/oauth/authorize</code><code>/oauth/token</code><code>/oauth/userinfo</code><code>/oauth/revoke</code></div></section>
+  </main>
+  <footer class="footer">雨云代理商用户资源管理 <span>只读资源清单 · 按授权范围共享资料</span></footer>
+</body></html>

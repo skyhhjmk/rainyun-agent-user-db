@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>系统设置 · 雨云代理商平台</title><link rel="stylesheet" href="/assets/app.css"></head>
+<body>
+  <header class="topbar"><a class="brand" href="/admin/dashboard"><span class="brand-mark">R</span><span>雨云代理商平台</span></a><div class="topbar-right"><a class="button button-quiet" href="/admin/dashboard">控制台</a><span class="admin-chip">系统设置</span><form method="post" action="/logout"><button class="button button-quiet" type="submit">退出</button></form></div></header>
+  <main class="page">
+    <div class="page-heading"><div><p class="eyebrow">SYSTEM SETTINGS</p><h1>系统配置与管理员账号</h1><p class="muted">除数据库连接外的全部运行时配置均存储在数据库中，保存后立即生效。</p></div><span class="date-chip">DB-BACKED CONFIG</span></div>
+    {#if notice}<div class="notice"><strong>已保存</strong><span>{notice}</span></div>{/if}
+    {#if error}<div class="alert alert-error">{error}</div>{/if}
+    <div class="split-layout">
+      <section class="panel create-panel">
+        <p class="eyebrow">RUNTIME CONFIGURATION</p>
+        <h3>平台与雨云参数</h3>
+        <form method="post" action="/admin/settings" class="stack">
+          <input type="hidden" name="csrf_token" value="{csrfToken}">
+          <label for="agent-uid">雨云代理商 UID</label>
+          <input id="agent-uid" name="agent_uid" type="number" min="0" required value="{agentUid}">
+          <span class="small muted">客户绑定 API Key 时校验其 <code>Inviter</code> 是否精确等于此 UID（0 表示未配置）。</span>
+
+          <label for="api-base-url">雨云 API 根地址</label>
+          <input id="api-base-url" name="api_base_url" type="url" required value="{apiBaseUrl}">
+
+          <label for="timeout-seconds">雨云 API 超时时间（秒）</label>
+          <input id="timeout-seconds" name="timeout_seconds" type="number" min="1" max="60" required value="{timeoutSeconds}">
+
+          <label for="public-base-url">对外根地址（OAuth2 元数据）</label>
+          <input id="public-base-url" name="public_base_url" type="url" required value="{publicBaseUrl}">
+          <span class="small muted">用于 <code>/.well-known/oauth-authorization-server</code> 公布的端点地址，例如 <code>https://agent.example.com</code>。</span>
+
+          <label class="check-label"><input type="checkbox" name="cookie_secure" {#if cookieSecure}checked{/if}> 仅通过 HTTPS 发送 Cookie 并启用 HSTS（生产环境请开启）</label>
+
+          <label for="session-secret">Session HMAC 密钥（留空表示不修改）</label>
+          <input id="session-secret" name="session_secret" type="password" autocomplete="new-password" minlength="32" placeholder="已配置，留空保持不变；至少 32 个字符">
+          <span class="small muted">首次启动已自动生成或从初始环境变量导入。</span>
+
+          <label for="credential-encryption-key">API Key 加密主密钥（留空表示不修改）</label>
+          <input id="credential-encryption-key" name="credential_encryption_key" type="password" autocomplete="new-password" minlength="32" placeholder="已配置，留空保持不变；至少 32 个字符">
+          <span class="small muted">修改此密钥时，系统会在事务中自动使用新密钥重新加密所有已保存的客户 API Key。</span>
+
+          <button class="button button-primary" type="submit">保存系统配置 <span aria-hidden="true">→</span></button>
+        </form>
+      </section>
+      <aside class="panel create-panel">
+        <p class="eyebrow">ADMIN ACCOUNT</p>
+        <h3>管理员账号与密码</h3>
+        <form method="post" action="/admin/settings/account" class="stack">
+          <input type="hidden" name="csrf_token" value="{csrfToken}">
+          <label for="admin-username">管理员账号</label>
+          <input id="admin-username" name="username" required maxlength="100" value="{adminUsername}">
+
+          <label for="current-password">当前密码</label>
+          <input id="current-password" name="current_password" type="password" autocomplete="current-password" required>
+
+          <label for="new-password">新密码（留空表示不修改密码）</label>
+          <input id="new-password" name="new_password" type="password" autocomplete="new-password" minlength="8" placeholder="至少 8 个字符">
+
+          <label for="confirm-password">确认新密码</label>
+          <input id="confirm-password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" placeholder="再次输入新密码">
+
+          <button class="button button-primary" type="submit">更新管理员信息 <span aria-hidden="true">→</span></button>
+        </form>
+      </aside>
+    </div>
+  </main>
+  <footer class="footer">雨云代理商用户资源管理 <span>数据库持久化配置 · 实时生效</span></footer>
+</body></html>

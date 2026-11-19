@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>绑定雨云账号 · 雨云代理商平台</title>
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body class="auth-page">
+  <main class="auth-card">
+    <a class="brand" href="/"><span class="brand-mark">R</span><span>雨云代理商平台</span></a>
+    <p class="eyebrow">CUSTOMER ACCESS</p>
+    <h1>绑定你的雨云账号</h1>
+    <p class="muted">使用雨云 API Key 验证账号身份。平台只接受上级 UID 与当前代理商相符的账号。</p>
+    {#if error}<div class="alert alert-error">{error}</div>{/if}
+    <form method="post" action="/login" class="stack">
+      <input type="hidden" name="return_to" value="{returnTo}">
+      <label for="api-key">雨云 API Key</label>
+      <input id="api-key" name="api_key" type="password" autocomplete="current-password" required maxlength="512" placeholder="粘贴你的 API Key">
+      <button class="button button-primary" type="submit">验证并继续 <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="trust-note"><span class="trust-dot"></span><span>API Key 通过雨云官方 API 校验，并以 AES-GCM 加密存储。</span></div>
+    <p class="small muted">API Key 不会传递给第三方应用。你可以在雨云账号设置中随时更换密钥。</p>
+  </main>
+</body>
+</html>
