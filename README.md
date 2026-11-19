@@ -2,6 +2,8 @@
 
 基于 Quarkus、Qute 和 PostgreSQL 的代理商客户绑定、资源清单与 OAuth2 授权服务。
 
+> 注意：本项目为自用测试构建，生产环境使用请自行评估后使用。
+
 ## 功能
 
 - 客户提交雨云 API Key；平台请求雨云 `GET /user/`，校验 `data.ID`、`data.Inviter`、实名状态和微信绑定状态。仅接受 `Inviter` 精确等于代理商 UID、实名字段明确为通过且 `WechatOpenID` 非空的账号。
